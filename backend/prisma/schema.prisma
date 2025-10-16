@@ -1,3 +1,4 @@
+// prisma/schema.prisma - BASIC VERSION
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,8 +8,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String?
+model Player {
+  id          Int      @id @default(autoincrement())
+  externalId  String   @unique
+  name        String
+  position    String
+  team        String
+  jerseyNumber Int?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  stats       PlayerStat[]
+  
+  @@map("players")
+}
+
+model PlayerStat {
+  id          Int      @id @default(autoincrement())
+  playerId    Int
+  player      Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  
+  // Basic identification
+  season      Int
+  week        Int?
+  
+  // CORE STATS (Most common across positions)
+  passingYards       Int?
+  passingTouchdowns  Int?
+  interceptions      Int?
+  
+  rushingYards       Int?
+  rushingTouchdowns  Int?
+  
+  receptions         Int?
+  receivingYards     Int?
+  receivingTouchdowns Int?
+  
+  // Universal
+  fumbles           Int?
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  @@unique([playerId, season, week])
+  @@map("player_stats")
 }
