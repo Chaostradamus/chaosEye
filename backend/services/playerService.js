@@ -3,7 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const PlayerService = {
-  async searchPlayers(name) {
+  async findPlayersByName(name) {
     try {
       const players = await prisma.player.findMany({
         where: {

@@ -2,7 +2,7 @@
 const playerService = require('../services/playerService');
 
 const PlayerController = {
-  async searchPlayers(req, res) {
+  async handlePlayerSearch(req, res) {
     try {
       const { name } = req.query;
       
@@ -12,7 +12,7 @@ const PlayerController = {
         });
       }
 
-      const players = await playerService.searchPlayers(name.trim());
+      const players = await playerService.findPlayersByName(name.trim());
       
       res.json({
         success: true,
