@@ -2,7 +2,7 @@
 const playerService = require('../services/playerService');
 
 const PlayerController = {
-  async handlePlayerSearch(req, res) {
+  async searchPlayers(req, res) {
     try {
       const { name } = req.query;
       
@@ -12,7 +12,7 @@ const PlayerController = {
         });
       }
 
-      const players = await playerService.findPlayersByName(name.trim());
+      const players = await playerService.searchPlayers(name.trim());
       
       res.json({
         success: true,
@@ -53,7 +53,42 @@ const PlayerController = {
         error: 'Internal server error' 
       });
     }
-  }
+  },
+
+  async testSportsRadar(req, res) {
+    try {
+      const player = await playerService.fetchAndCachePlayer('11cad59d-90dd-449c-a839-dddaba4fe16c');
+      res.json({ success: true, data: player });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  },
+  // services/playerService.js - Update the transformAndCachePlayer function
+async transformAndCachePlayer(apiData) {
+  // Transform SportsRadar API response to our schema
+  const player = await prisma.player.create({
+    data: {
+      externalId: apiData.id,
+      name: apiData.name,
+      position: apiData.position,
+      team: apiData.team?.name || 'Unknown',
+      jerseyNumber: parseInt(apiData.jersey) || null, // ← Fix: use 'jersey' not 'jersey_number'
+      height: apiData.height ? `${apiData.height}` : null, // ← Convert to string
+      weight: apiData.weight || null,
+      college: apiData.college || null,
+      experience: apiData.experience || null,
+      // Don't create stats yet - we'll fix that separately
+      // stats: apiData.seasons ? {
+      //   create: this.transformStats(apiData.seasons)
+      // } : undefined
+    },
+    include: {
+      stats: true
+    }
+  });
+
+  return player;
+}
 };
 
 module.exports = PlayerController;

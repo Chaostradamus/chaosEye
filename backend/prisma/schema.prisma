@@ -8,6 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// prisma/schema.prisma
 model Player {
   id          Int      @id @default(autoincrement())
   externalId  String   @unique
@@ -15,6 +16,12 @@ model Player {
   position    String
   team        String
   jerseyNumber Int?
+  height      String?  // ← Make sure this exists as String?
+  weight      Int?
+  birthDate   DateTime?
+  college     String?
+  experience  Int?
+  status      String?
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

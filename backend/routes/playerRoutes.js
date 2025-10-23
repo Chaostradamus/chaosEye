@@ -9,4 +9,7 @@ router.get('/search', playerController.searchPlayers);
 // GET /api/players/:id
 router.get('/:id', playerController.getPlayerById);
 
+// Test SportsRadar endpoint
+router.get('/test/sportsradar', playerController.testSportsRadar);
+
 module.exports = router;
