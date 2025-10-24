@@ -1,10 +1,12 @@
 // services/apiService.js
+// services/apiService.js
 const axios = require('axios');
+require('dotenv').config();
 
 class SportsRadarAPI {
   constructor() {
     this.baseURL = 'https://api.sportradar.com/nfl/official/trial/v7/en';
-    this.apiKey = 'ouq5rnvuViEjyGXMHLil0MHZRz7VuNjgMuGSIRI6'; // Move to .env later
+    this.apiKey = 'ouq5rnvuViEjyGXMHLil0MHZRz7VuNjgMuGSIRI6';
   }
 
   async makeRequest(endpoint) {
@@ -22,17 +24,19 @@ class SportsRadarAPI {
     }
   }
 
-  // Get player by SportsRadar ID
-  async getPlayerById(playerId) {
-    return await this.makeRequest(`players/${playerId}/profile.json`);
+  // 👇 GET ALL TEAMS
+  async getAllTeams() {
+    return await this.makeRequest('league/teams.json');
   }
 
-  // We'll need to find the search endpoint - let me check if you have it
-  async searchPlayers(name) {
-    // This endpoint might be different - do you have a search endpoint?
-    // If not, we'll need to work with what we have
-    console.log('Need search endpoint for:', name);
-    return null;
+  // 👇 GET SPECIFIC TEAM ROSTER
+  async getTeamRoster(teamId) {
+    return await this.makeRequest(`teams/${teamId}/full_roster.json`);
+  }
+
+  // 👇 GET PLAYER PROFILE (existing)
+  async getPlayerById(playerId) {
+    return await this.makeRequest(`players/${playerId}/profile.json`);
   }
 }
 

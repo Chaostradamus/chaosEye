@@ -3,13 +3,14 @@ const express = require('express');
 const router = express.Router();
 const playerController = require('../controllers/playerController');
 
-// GET /api/players/search?name=patrick
+// Player search and retrieval
 router.get('/search', playerController.searchPlayers);
-
-// GET /api/players/:id
 router.get('/:id', playerController.getPlayerById);
 
-// Test SportsRadar endpoint
+// SportsRadar API testing
 router.get('/test/sportsradar', playerController.testSportsRadar);
+
+// 👇 NEW: Cache management
+router.get('/cache/rebuild', playerController.rebuildPlayerCache);
 
 module.exports = router;
