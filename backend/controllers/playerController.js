@@ -2,7 +2,7 @@
 const playerService = require('../services/playerService');
 
 const PlayerController = {
-  // 👇 EXISTING: Search players
+  // Search players
   async searchPlayers(req, res) {
     try {
       const { name } = req.query;
@@ -30,7 +30,7 @@ const PlayerController = {
     }
   },
 
-  // 👇 EXISTING: Get player by ID
+  // Get player by ID
   async getPlayerById(req, res) {
     try {
       const { id } = req.params;
@@ -57,7 +57,7 @@ const PlayerController = {
     }
   },
 
-  // 👇 EXISTING: Test SportsRadar connection
+  // Test SportsRadar connection
   async testSportsRadar(req, res) {
     try {
       const player = await playerService.fetchAndCachePlayer('11cad59d-90dd-449c-a839-dddaba4fe16c');
@@ -67,16 +67,16 @@ const PlayerController = {
     }
   },
 
-  // 👇 NEW: Rebuild the entire player cache
+  // 👇 UPDATED: Rebuild player cache with detailed response
   async rebuildPlayerCache(req, res) {
     try {
       console.log('🔄 Manual cache rebuild requested...');
-      const totalPlayers = await playerService.cacheAllPlayers();
+      const cacheResult = await playerService.cacheAllPlayers();
       
       res.json({ 
         success: true, 
-        message: `Successfully cached ${totalPlayers} NFL players`,
-        playersCached: totalPlayers
+        message: `Player cache rebuilt successfully!`,
+        data: cacheResult
       });
       
     } catch (error) {
