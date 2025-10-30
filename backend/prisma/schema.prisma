@@ -40,6 +40,8 @@ model PlayerStat {
   season      Int
   week        Int?
   
+  gamesPlayed Int? 
+
   // CORE STATS (Most common across positions)
   passingYards       Int?
   passingTouchdowns  Int?
