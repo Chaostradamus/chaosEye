@@ -127,48 +127,109 @@ const PlayerService = {
     }
   },
 
-  async cachePlayerStats(playerId, seasons) {
-    try {
-      const regularSeasons = seasons.filter(season => season.type === 'REG');
-      
-      for (const season of regularSeasons) {
-        const teamStats = season.teams[0]?.statistics;
-        if (!teamStats) continue;
+  // services/playerService.js - REPLACE the cachePlayerStats function
+async cachePlayerStats(playerId, seasons) {
+  try {
+    const regularSeasons = seasons.filter(season => season.type === 'REG');
+    
+    for (const season of regularSeasons) {
+      const teamStats = season.teams[0]?.statistics;
+      if (!teamStats) continue;
 
-        const passing = teamStats.passing;
-        const rushing = teamStats.rushing;
-        const receiving = teamStats.receiving;
+      const passing = teamStats.passing;
+      const rushing = teamStats.rushing;
+      const receiving = teamStats.receiving;
+      const defense = teamStats.defense;
+      const fumbles = teamStats.fumbles;
+      const returns = teamStats.returns;
+      const kicking = teamStats.kicking;
 
-        const existingStats = await prisma.playerStat.findFirst({
-          where: {
+      const existingStats = await prisma.playerStat.findFirst({
+        where: {
+          playerId: playerId,
+          season: season.year
+        }
+      });
+
+      if (!existingStats) {
+        await prisma.playerStat.create({
+          data: {
             playerId: playerId,
-            season: season.year
+            season: season.year,
+            gamesPlayed: teamStats.games_played || null,
+            gamesStarted: teamStats.games_started || null,
+
+            // 👇 PASSING STATS
+            passingAttempts: passing?.attempts || null,
+            passingCompletions: passing?.completions || null,
+            completionPercentage: passing?.cmp_pct || null,
+            passingYards: passing?.yards || null,
+            passingTouchdowns: passing?.touchdowns || null,
+            interceptions: passing?.interceptions || null,
+            passerRating: passing?.rating || null,
+            sacks: passing?.sacks || null,
+            sackYards: passing?.sack_yards || null,
+            longestPass: passing?.longest || null,
+            airYards: passing?.air_yards || null,
+            netPassingYards: passing?.net_yards || null,
+
+            // 👇 RUSHING STATS
+            rushingAttempts: rushing?.attempts || null,
+            rushingYards: rushing?.yards || null,
+            rushingTouchdowns: rushing?.touchdowns || null,
+            yardsPerCarry: rushing?.avg_yards || null,
+            longestRush: rushing?.longest || null,
+            rushingFirstDowns: rushing?.first_downs || null,
+            fumbles: fumbles?.fumbles || null,
+            fumblesLost: fumbles?.lost_fumbles || null,
+
+            // 👇 RECEIVING STATS
+            targets: receiving?.targets || null,
+            receptions: receiving?.receptions || null,
+            receivingYards: receiving?.yards || null,
+            receivingTouchdowns: receiving?.touchdowns || null,
+            yardsPerReception: receiving?.avg_yards || null,
+            longestReception: receiving?.longest || null,
+            receivingFirstDowns: receiving?.first_downs || null,
+            drops: receiving?.dropped_passes || null,
+
+            // 👇 DEFENSIVE STATS
+            tackles: defense?.tackles || null,
+            soloTackles: defense?.solo_tackles || null,
+            assists: defense?.assists || null,
+            sacksMade: defense?.sacks || null,
+            sackYardsMade: defense?.sack_yards || null,
+            interceptionsMade: defense?.interceptions || null,
+            passesDefended: defense?.passes_defended || null,
+            forcedFumbles: defense?.forced_fumbles || null,
+            fumbleRecoveries: defense?.fumble_recoveries || null,
+            defensiveTouchdowns: defense?.defensive_touchdowns || null,
+            quarterbackHits: defense?.qb_hits || null,
+            tacklesForLoss: defense?.tloss || null,
+
+            // 👇 SPECIAL TEAMS
+            puntReturns: returns?.punt_returns || null,
+            puntReturnYards: returns?.punt_return_yards || null,
+            puntReturnTouchdowns: returns?.punt_return_touchdowns || null,
+            kickReturns: returns?.kick_returns || null,
+            kickReturnYards: returns?.kick_return_yards || null,
+            kickReturnTouchdowns: returns?.kick_return_touchdowns || null,
+            punts: kicking?.punts || null,
+            puntYards: kicking?.punt_yards || null,
+            fieldGoalsMade: kicking?.field_goals_made || null,
+            fieldGoalsAttempted: kicking?.field_goals_attempted || null,
+            fieldGoalPercentage: kicking?.field_goal_percentage || null,
+            extraPointsMade: kicking?.extra_points_made || null,
+            extraPointsAttempted: kicking?.extra_points_attempted || null,
           }
         });
-
-        if (!existingStats) {
-          await prisma.playerStat.create({
-            data: {
-              playerId: playerId,
-              season: season.year,
-              passingYards: passing?.yards || null,
-              passingTouchdowns: passing?.touchdowns || null,
-              interceptions: passing?.interceptions || null,
-              rushingYards: rushing?.yards || null,
-              rushingTouchdowns: rushing?.touchdowns || null,
-              receptions: receiving?.receptions || null,
-              receivingYards: receiving?.yards || null,
-              receivingTouchdowns: receiving?.touchdowns || null,
-              fumbles: teamStats.fumbles?.fumbles || null,
-              gamesPlayed: teamStats.games_played || null
-            }
-          });
-        }
+        console.log(`      📊 Cached comprehensive stats for season ${season.year}`);
       }
-    } catch (error) {
-      console.error('Error caching player stats:', error);
     }
+  } catch (error) {
+    console.error('Error caching player stats:', error);
   }
+}
 };
 
 module.exports = PlayerService;
