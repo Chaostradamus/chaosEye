@@ -14,8 +14,7 @@ function App() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // const response = await axios.get("http://localhost:5000/");
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+       
         const response = await axios.get(`${API_URL}/`);
         setMessage(response.data.message);
         setError("");

@@ -9,8 +9,14 @@ console.log('Server starting... Prisma test:', typeof PrismaClient);
 const prisma = new PrismaClient();
 const app = express();
 
-// Middleware
-app.use(cors());
+// Middleware - ✅ UPDATED CORS
+app.use(cors({
+  origin: [
+    "https://chaoseye-frontend.onrender.com",  // Your production frontend
+    "http://localhost:5173"                    // Your local development
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
