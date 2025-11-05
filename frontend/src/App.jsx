@@ -8,12 +8,15 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [players, setPlayers] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5000/");
+        // const response = await axios.get("http://localhost:5000/");
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        const response = await axios.get(`${API_URL}/`);
         setMessage(response.data.message);
         setError("");
       } catch (err) {
@@ -31,8 +34,11 @@ function App() {
 
     setSearchLoading(true);
     try {
+      // const response = await axios.get(
+      //   `http://localhost:5000/api/players/search?name=${searchTerm}`
+      // );
       const response = await axios.get(
-        `http://localhost:5000/api/players/search?name=${searchTerm}`
+        `${API_URL}/api/players/search?name=${searchTerm}`
       );
       console.log("Search response:", response.data);
       setPlayers(response.data.data);

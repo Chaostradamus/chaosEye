@@ -1,62 +1,78 @@
-// prisma/schema.prisma - BASIC VERSION
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
 // prisma/schema.prisma
-model Player {
-  id          Int      @id @default(autoincrement())
-  externalId  String   @unique
-  name        String
-  position    String
-  team        String
-  jerseyNumber Int?
-  height      String?  // ← Make sure this exists as String?
-  weight      Int?
-  birthDate   DateTime?
-  college     String?
-  experience  Int?
-  status      String?
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  stats       PlayerStat[]
-  
-  @@map("players")
-}
-
 model PlayerStat {
   id          Int      @id @default(autoincrement())
   playerId    Int
   player      Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
   
-  // Basic identification
+  // Season info
   season      Int
   week        Int?
-  
-  gamesPlayed Int? 
+  gamesPlayed Int?
+  gamesStarted Int?
 
-  // CORE STATS (Most common across positions)
-  passingYards       Int?
-  passingTouchdowns  Int?
-  interceptions      Int?
-  
-  rushingYards       Int?
-  rushingTouchdowns  Int?
-  
-  receptions         Int?
-  receivingYards     Int?
-  receivingTouchdowns Int?
-  
-  // Universal
-  fumbles           Int?
-  
+  // 👇 PASSING STATS
+  passingAttempts      Int?
+  passingCompletions   Int?
+  completionPercentage Float?
+  passingYards         Int?
+  passingTouchdowns    Int?
+  interceptions        Int?
+  passerRating         Float?
+  sacks                Int?
+  sackYards            Int?
+  longestPass          Int?
+  airYards             Int?
+  netPassingYards      Int?
+
+  // 👇 RUSHING STATS
+  rushingAttempts      Int?
+  rushingYards         Int?
+  rushingTouchdowns    Int?
+  yardsPerCarry        Float?
+  longestRush          Int?
+  rushingFirstDowns    Int?
+  fumbles              Int?
+  fumblesLost          Int?
+
+  // 👇 RECEIVING STATS
+  targets              Int?
+  receptions           Int?
+  receivingYards       Int?
+  receivingTouchdowns  Int?
+  yardsPerReception    Float?
+  longestReception     Int?
+  receivingFirstDowns  Int?
+  drops                Int?
+
+  // 👇 DEFENSIVE STATS
+  tackles              Int?
+  soloTackles          Int?
+  assists              Int?
+  sacksMade            Int?
+  sackYardsMade        Int?
+  interceptionsMade    Int?
+  passesDefended       Int?
+  forcedFumbles        Int?
+  fumbleRecoveries     Int?
+  defensiveTouchdowns  Int?
+  quarterbackHits      Int?
+  tacklesForLoss       Int?
+
+  // 👇 SPECIAL TEAMS
+  puntReturns          Int?
+  puntReturnYards      Int?
+  puntReturnTouchdowns Int?
+  kickReturns          Int?
+  kickReturnYards      Int?
+  kickReturnTouchdowns Int?
+  punts                Int?
+  puntYards            Int?
+  fieldGoalsMade       Int?
+  fieldGoalsAttempted  Int?
+  fieldGoalPercentage  Float?
+  extraPointsMade      Int?
+  extraPointsAttempted Int?
+
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   
