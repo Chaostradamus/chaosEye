@@ -1,4 +1,36 @@
-// prisma/schema.prisma
+// backend/prisma/schema.prisma
+
+// ✅ ADD THIS DATASOURCE BLOCK
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ✅ ADD THE MISSING PLAYER MODEL
+model Player {
+  id           Int          @id @default(autoincrement())
+  externalId   String       @unique
+  name         String
+  position     String
+  team         String
+  jerseyNumber Int?
+  height       String?
+  weight       Int?
+  college      String?
+  experience   Int?
+  stats        PlayerStat[]
+  
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  
+  @@map("players")
+}
+
+// ✅ YOUR EXISTING PLAYERSTAT MODEL (keep this)
 model PlayerStat {
   id          Int      @id @default(autoincrement())
   playerId    Int
